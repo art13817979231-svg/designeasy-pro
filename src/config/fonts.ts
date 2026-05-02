@@ -1,7 +1,6 @@
-// BUILTIN_FONTS - 字体配置
-// 43 英文字体 + 18 中文字体
+import type { FontEntry } from '../types/canvas';
 
-export const BUILTIN_FONTS = [
+export const BUILTIN_FONTS: FontEntry[] = [
   // Sans-serif
   { name: 'Inter', value: '"Inter", system-ui, sans-serif' },
   { name: 'Roboto', value: '"Roboto", sans-serif' },
@@ -65,10 +64,4 @@ export const BUILTIN_FONTS = [
   { name: '苹方-简', value: '"PingFang SC Regular", sans-serif' },
   { name: '苹方-中', value: '"PingFang SC Medium", sans-serif' },
   { name: '苹方-粗', value: '"PingFang SC Semibold", sans-serif' },
-];
-
-// Font imports - import these in App.tsx
-export const FONT_IMPORTS = [
-  // Keep existing @fontsource imports in App.tsx
-  // Add new fonts here when needed
 ];
