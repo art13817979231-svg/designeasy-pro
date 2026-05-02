@@ -292,25 +292,29 @@ const PropertySlider = memo(({ label, value, min, max, step = 1, onChange }) => 
   }, [step, min, max]);
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2.5">
       <div className="flex justify-between items-center">
-        <span className="text-[10px] font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">{label}</span>
-        <span className="text-[10px] font-mono font-black text-zinc-600 dark:text-zinc-300 tracking-tight">
+        <span className="text-[10px] font-medium text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">{label}</span>
+        <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 tracking-tight tabular-nums">
           {typeof value === 'number' ? (dynamicStep < 1 ? value.toFixed(2) : Math.round(value)) : (value ?? 0)}
         </span>
       </div>
-      <div className="relative">
-        <div className="absolute inset-0 h-1.5 top-1/2 -translate-y-1/2 rounded-full bg-zinc-100 dark:bg-zinc-700/60 overflow-hidden">
-          <div className="h-full bg-slate-600 dark:bg-white rounded-full transition-all duration-75" 
-            style={{ width: `${((value ?? 0) - min) / (max - min) * 100}%` }} />
-        </div>
-        <input type="range" min={min} max={max} step={dynamicStep} value={value ?? 0} 
-          onChange={(e) => onChange(parseFloat(e.target.value))} 
-          className="relative w-full h-6 appearance-none cursor-pointer bg-transparent z-10
-            [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 
-            [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-slate-600 dark:[&::-webkit-slider-thumb]:bg-white
-            [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:cursor-grab [&::-webkit-slider-thumb]:active:cursor-grabbing
-            [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white dark:[&::-webkit-slider-thumb]:border-zinc-900" />
+      <div className="relative flex items-center">
+        {/* Track background */}
+        <div className="absolute inset-x-0 h-[3px] rounded-full bg-zinc-200/80 dark:bg-zinc-700/50" />
+        {/* Filled portion */}
+        <div className="absolute h-[3px] rounded-full bg-zinc-400 dark:bg-zinc-300 transition-all duration-75 pointer-events-none"
+          style={{ width: `${((value ?? 0) - min) / (max - min) * 100}%`, maxWidth: '100%' }} />
+        <input type="range" min={min} max={max} step={dynamicStep} value={value ?? 0}
+          onChange={(e) => onChange(parseFloat(e.target.value))}
+          className="relative w-full h-5 appearance-none cursor-pointer bg-transparent z-10
+            [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3
+            [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white
+            [&::-webkit-slider-thumb]:shadow-[0_1px_4px_rgba(0,0,0,0.15)] [&::-webkit-slider-thumb]:cursor-grab
+            [&::-webkit-slider-thumb]:active:cursor-grabbing
+            [&::-webkit-slider-thumb]:border-[1.5px] [&::-webkit-slider-thumb]:border-zinc-300
+            [&::-webkit-slider-thumb]:transition-shadow [&::-webkit-slider-thumb]:duration-150
+            [&::-webkit-slider-thumb]:hover:shadow-[0_2px_6px_rgba(0,0,0,0.2)]" />
       </div>
     </div>
   );
@@ -319,7 +323,7 @@ const PropertySlider = memo(({ label, value, min, max, step = 1, onChange }) => 
 const ColorPicker = memo(({ label, value, onChange, recentColors, onPresetClick }) => (
   <div className="space-y-3">
     <div className="flex items-center justify-between">
-      <span className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">{label}</span>
+      <span className="text-[9px] font-medium text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">{label}</span>
       <div className="flex items-center gap-2">
         <div className="relative">
           <div className="w-8 h-8 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 shadow-inner overflow-hidden">
@@ -331,7 +335,7 @@ const ColorPicker = memo(({ label, value, onChange, recentColors, onPresetClick 
     </div>
     {recentColors && recentColors.length > 0 && (
       <div className="space-y-2">
-        <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest">最近</span>
+        <span className="text-[8px] font-medium text-zinc-400 uppercase tracking-wider">最近</span>
         <div className="flex flex-wrap gap-1.5">
           {recentColors.slice(0, 12).map((c, i) => (
             <button key={i} onClick={() => onPresetClick(c)} 
@@ -342,7 +346,7 @@ const ColorPicker = memo(({ label, value, onChange, recentColors, onPresetClick 
       </div>
     )}
     <div className="space-y-2">
-      <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest">预设</span>
+      <span className="text-[8px] font-medium text-zinc-400 uppercase tracking-wider">预设</span>
       <div className="flex flex-wrap gap-1.5">
         {COLOR_PRESETS.map((c, i) => (
           <button key={i} onClick={() => onPresetClick(c)} 
@@ -357,13 +361,13 @@ const ColorPicker = memo(({ label, value, onChange, recentColors, onPresetClick 
 const SectionHeader = memo(({ title, defaultOpen = true, onToggle, children }) => {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="space-y-3">
+    <div className="space-y-3.5">
       <button onClick={() => { setOpen(!open); onToggle?.(); }} 
-        className="flex items-center justify-between w-full group py-1 border-b border-zinc-100 dark:border-zinc-800">
-        <span className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.18em]">{title}</span>
+        className="flex items-center justify-between w-full group py-1 border-b border-zinc-100/60 dark:border-zinc-800/40">
+        <span className="text-[9px] font-medium text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em]">{title}</span>
         <ChevronIcon open={open} />
       </button>
-      {open && <div className="pt-2">{children}</div>}
+      {open && <div className="pt-2.5">{children}</div>}
     </div>
   );
 });
@@ -1276,52 +1280,52 @@ const App = () => {
 
         {!isPreviewMode && (
           <aside className={`w-[280px] border-l p-6 z-[160] overflow-y-auto scrollbar-hide shrink-0 transition-transform duration-300 shadow-xl ${isRightPanelOpen ? 'translate-x-0' : 'translate-x-full absolute right-0 top-12 bottom-0'} ${darkMode ? 'bg-[#0F1117] border-slate-800' : 'bg-white border-slate-200/60'}`}>
-            <div className="flex items-center justify-between mb-8 text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">
-               <span className="flex items-center gap-2"><Sparkles size={12} className="text-indigo-500"/>{selectedLayer ? t.inspect : t.canvas}</span>
-               <button onClick={() => setIsRightPanelOpen(false)} className={`p-1 rounded transition-colors ${darkMode ? 'hover:bg-slate-700 text-slate-500' : 'hover:bg-slate-50 text-slate-300'}`}><X size={16} /></button>
+            <div className="flex items-center justify-between mb-6 text-[9px] font-medium uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-500">
+               <span className="flex items-center gap-1.5"><Sparkles size={11} className="text-zinc-300 dark:text-zinc-600"/>{selectedLayer ? t.inspect : t.canvas}</span>
+               <button onClick={() => setIsRightPanelOpen(false)} className={`p-0.5 rounded transition-colors ${darkMode ? 'hover:bg-slate-700/50 text-zinc-500' : 'hover:bg-slate-50 text-zinc-300'}`}><X size={14} /></button>
             </div>
 
             {selectedLayer ? (
               <div className="space-y-6">
                 {/* Actions */}
                 <div className="grid grid-cols-2 gap-2">
-                  <button onClick={duplicateSelected} className="py-2.5 bg-black rounded-xl text-[10px] font-black uppercase text-white hover:bg-slate-800 flex items-center justify-center gap-2 transition-all"><CopyPlus size={14}/> {t.duplicate}</button>
-                  <button onClick={deleteSelected} className={`py-2.5 rounded-xl text-[10px] font-black uppercase flex items-center justify-center gap-2 transition-all ${darkMode ? 'bg-slate-800 text-red-400 hover:bg-red-900/30 border border-red-800/30' : 'bg-white text-red-500 hover:bg-red-50 border border-red-100'}`}><Trash2 size={14}/> {t.delete}</button>
+                  <button onClick={duplicateSelected} className="py-2 bg-zinc-100 dark:bg-slate-700/60 rounded-xl text-[9px] font-semibold uppercase text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-slate-700 flex items-center justify-center gap-1.5 transition-all"><CopyPlus size={12}/> {t.duplicate}</button>
+                  <button onClick={deleteSelected} className={`py-2 rounded-xl text-[9px] font-semibold uppercase flex items-center justify-center gap-1.5 transition-all ${darkMode ? 'bg-slate-800/50 text-zinc-400 hover:bg-red-900/20 border border-transparent' : 'bg-white text-zinc-400 hover:bg-red-50 hover:text-red-500 border border-zinc-100'}`}><Trash2 size={12}/> {t.delete}</button>
                 </div>
 
                 {/* Lock status */}
-                <div className={`flex items-center justify-between p-3 rounded-xl ${darkMode ? 'bg-slate-800/50' : 'bg-slate-50/50'}`}>
-                  <span className="text-[10px] font-bold text-slate-400">
+                <div className={`flex items-center justify-between p-2.5 rounded-xl ${darkMode ? 'bg-slate-800/40' : 'bg-zinc-50/60'}`}>
+                  <span className="text-[9px] font-medium text-zinc-400 dark:text-zinc-500">
                     {selectedLayer.isLocked ? t.lock : t.unlock}
                   </span>
-                  <button onClick={() => toggleLayerStatus(selectedLayer.id, 'isLocked')} className={`p-1.5 rounded-lg transition-colors ${selectedLayer.isLocked ? 'text-yellow-500' : 'text-slate-300 hover:text-slate-600 dark:hover:text-slate-400'}`}>
-                    {selectedLayer.isLocked ? <Lock size={16}/> : <Unlock size={16}/>}
+                  <button onClick={() => toggleLayerStatus(selectedLayer.id, 'isLocked')} className={`p-1 rounded-md transition-colors ${selectedLayer.isLocked ? 'text-amber-500' : 'text-zinc-300 hover:text-zinc-500 dark:hover:text-zinc-400'}`}>
+                    {selectedLayer.isLocked ? <Lock size={14}/> : <Unlock size={14}/>}
                   </button>
                 </div>
                 
                 {/* Alignment */}
                 {selectedIds.length > 0 && (
-                  <div className={`p-3 rounded-xl ${darkMode ? 'bg-slate-800/50' : 'bg-slate-50/50'}`}>
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-3">{t.align}</span>
-                    <div className="grid grid-cols-3 gap-1.5">
-                      <button onClick={() => alignLayers('left')} className={`p-2 rounded-lg flex items-center justify-center transition-all ${darkMode ? 'hover:bg-slate-700 text-slate-400' : 'hover:bg-slate-100 text-slate-400'}`} title={t.alignLeft}><AlignStartVertical size={14}/></button>
-                      <button onClick={() => alignLayers('hcenter')} className={`p-2 rounded-lg flex items-center justify-center transition-all ${darkMode ? 'hover:bg-slate-700 text-slate-400' : 'hover:bg-slate-100 text-slate-400'}`} title={t.alignHCenter}><AlignLeft size={14} className="rotate-0"/></button>
-                      <button onClick={() => alignLayers('right')} className={`p-2 rounded-lg flex items-center justify-center transition-all ${darkMode ? 'hover:bg-slate-700 text-slate-400' : 'hover:bg-slate-100 text-slate-400'}`} title={t.alignRight}><AlignEndVertical size={14}/></button>
-                      <button onClick={() => alignLayers('top')} className={`p-2 rounded-lg flex items-center justify-center transition-all ${darkMode ? 'hover:bg-slate-700 text-slate-400' : 'hover:bg-slate-100 text-slate-400'}`} title={t.alignTop}><AlignStartVertical size={14} className="rotate-90"/></button>
-                      <button onClick={() => alignLayers('vcenter')} className={`p-2 rounded-lg flex items-center justify-center transition-all ${darkMode ? 'hover:bg-slate-700 text-slate-400' : 'hover:bg-slate-100 text-slate-400'}`} title={t.alignVCenter}><AlignCenterVertical size={14}/></button>
-                      <button onClick={() => alignLayers('bottom')} className={`p-2 rounded-lg flex items-center justify-center transition-all ${darkMode ? 'hover:bg-slate-700 text-slate-400' : 'hover:bg-slate-100 text-slate-400'}`} title={t.alignBottom}><AlignEndVertical size={14} className="rotate-90"/></button>
+                  <div className={`p-2.5 rounded-xl ${darkMode ? 'bg-slate-800/40' : 'bg-zinc-50/60'}`}>
+                    <span className="text-[9px] font-medium text-zinc-400 dark:text-zinc-500 uppercase tracking-wider block mb-2.5">{t.align}</span>
+                    <div className="grid grid-cols-3 gap-1">
+                      <button onClick={() => alignLayers('left')} className={`p-1.5 rounded-lg flex items-center justify-center transition-all ${darkMode ? 'hover:bg-slate-700 text-zinc-400' : 'hover:bg-zinc-100 text-zinc-400'}`} title={t.alignLeft}><AlignStartVertical size={12}/></button>
+                      <button onClick={() => alignLayers('hcenter')} className={`p-1.5 rounded-lg flex items-center justify-center transition-all ${darkMode ? 'hover:bg-slate-700 text-zinc-400' : 'hover:bg-zinc-100 text-zinc-400'}`} title={t.alignHCenter}><AlignLeft size={12} className="rotate-0"/></button>
+                      <button onClick={() => alignLayers('right')} className={`p-1.5 rounded-lg flex items-center justify-center transition-all ${darkMode ? 'hover:bg-slate-700 text-zinc-400' : 'hover:bg-zinc-100 text-zinc-400'}`} title={t.alignRight}><AlignEndVertical size={12}/></button>
+                      <button onClick={() => alignLayers('top')} className={`p-1.5 rounded-lg flex items-center justify-center transition-all ${darkMode ? 'hover:bg-slate-700 text-zinc-400' : 'hover:bg-zinc-100 text-zinc-400'}`} title={t.alignTop}><AlignStartVertical size={12} className="rotate-90"/></button>
+                      <button onClick={() => alignLayers('vcenter')} className={`p-1.5 rounded-lg flex items-center justify-center transition-all ${darkMode ? 'hover:bg-slate-700 text-zinc-400' : 'hover:bg-zinc-100 text-zinc-400'}`} title={t.alignVCenter}><AlignCenterVertical size={12}/></button>
+                      <button onClick={() => alignLayers('bottom')} className={`p-1.5 rounded-lg flex items-center justify-center transition-all ${darkMode ? 'hover:bg-slate-700 text-zinc-400' : 'hover:bg-zinc-100 text-zinc-400'}`} title={t.alignBottom}><AlignEndVertical size={12} className="rotate-90"/></button>
                     </div>
                   </div>
                 )}
 
                 {/* Layer ordering */}
-                <div className={`p-3 rounded-xl ${darkMode ? 'bg-slate-800/50' : 'bg-slate-50/50'} space-y-3`}>
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t.layerOrder}</span>
+                <div className={`p-2.5 rounded-xl ${darkMode ? 'bg-slate-800/40' : 'bg-zinc-50/60'} space-y-2.5`}>
+                  <span className="text-[9px] font-medium text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">{t.layerOrder}</span>
                   <div className="grid grid-cols-2 gap-2">
-                    <button onClick={() => moveLayer(selectedLayer.id, 'top')} className={`py-2 rounded-xl text-[9px] font-black flex items-center justify-center gap-1.5 uppercase shadow-sm active:scale-95 ${darkMode ? 'bg-slate-800 border border-slate-700 text-slate-300' : 'bg-white border border-slate-100 text-slate-600'}`}><ArrowUpToLine size={12}/>{t.bringFront}</button>
-                    <button onClick={() => moveLayer(selectedLayer.id, 'bottom')} className={`py-2 rounded-xl text-[9px] font-black flex items-center justify-center gap-1.5 uppercase shadow-sm active:scale-95 ${darkMode ? 'bg-slate-800 border border-slate-700 text-slate-300' : 'bg-white border border-slate-100 text-slate-600'}`}><ArrowDownToLine size={12}/>{t.sendBack}</button>
-                    <button onClick={() => moveLayer(selectedLayer.id, 'up')} className={`py-2 rounded-xl text-[9px] font-black flex items-center justify-center gap-1.5 uppercase shadow-sm active:scale-95 ${darkMode ? 'bg-slate-800 border border-slate-700 text-slate-300' : 'bg-white border border-slate-100 text-slate-600'}`}>{t.moveUp}</button>
-                    <button onClick={() => moveLayer(selectedLayer.id, 'down')} className={`py-2 rounded-xl text-[9px] font-black flex items-center justify-center gap-1.5 uppercase shadow-sm active:scale-95 ${darkMode ? 'bg-slate-800 border border-slate-700 text-slate-300' : 'bg-white border border-slate-100 text-slate-600'}`}>{t.moveDown}</button>
+                    <button onClick={() => moveLayer(selectedLayer.id, 'top')} className={`py-1.5 rounded-lg text-[9px] font-semibold flex items-center justify-center gap-1 uppercase active:scale-95 ${darkMode ? 'bg-slate-800/60 border border-slate-700/50 text-zinc-300' : 'bg-white border border-zinc-100 text-zinc-500'}`}><ArrowUpToLine size={12}/>{t.bringFront}</button>
+                    <button onClick={() => moveLayer(selectedLayer.id, 'bottom')} className={`py-1.5 rounded-lg text-[9px] font-semibold flex items-center justify-center gap-1 uppercase active:scale-95 ${darkMode ? 'bg-slate-800/60 border border-slate-700/50 text-zinc-300' : 'bg-white border border-zinc-100 text-zinc-500'}`}><ArrowDownToLine size={12}/>{t.sendBack}</button>
+                    <button onClick={() => moveLayer(selectedLayer.id, 'up')} className={`py-1.5 rounded-lg text-[9px] font-semibold flex items-center justify-center gap-1 uppercase active:scale-95 ${darkMode ? 'bg-slate-800/60 border border-slate-700/50 text-zinc-300' : 'bg-white border border-zinc-100 text-zinc-500'}`}>{t.moveUp}</button>
+                    <button onClick={() => moveLayer(selectedLayer.id, 'down')} className={`py-1.5 rounded-lg text-[9px] font-semibold flex items-center justify-center gap-1 uppercase active:scale-95 ${darkMode ? 'bg-slate-800/60 border border-slate-700/50 text-zinc-300' : 'bg-white border border-zinc-100 text-zinc-500'}`}>{t.moveDown}</button>
                   </div>
                 </div>
 
@@ -1389,7 +1393,7 @@ const App = () => {
                 {selectedLayer.type === 'image' && (
                   <SectionHeader title={t.appearance}>
                     <div className="space-y-4 pt-1">
-                      <button onClick={handleReplaceImage} className={`w-full py-2 rounded-xl text-[10px] font-black uppercase flex items-center justify-center gap-2 transition-all ${darkMode ? 'bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border border-slate-100 text-slate-600 hover:bg-slate-50'}`}>
+                      <button onClick={handleReplaceImage} className={`w-full py-1.5 rounded-lg text-[9px] font-semibold uppercase flex items-center justify-center gap-1.5 transition-all ${darkMode ? 'bg-slate-800/50 border border-slate-700/50 text-zinc-400 hover:bg-slate-700/60' : 'bg-zinc-50 border border-zinc-100 text-zinc-500 hover:bg-zinc-100'}`}>
                         <UploadCloud size={14}/> {t.replaceImg}
                       </button>
                       <PropertySlider label="宽度" value={selectedLayer.imgWidth ?? 400} min={20} max={4000} onChange={(v) => updateBatchLayers({ imgWidth: v })} />
