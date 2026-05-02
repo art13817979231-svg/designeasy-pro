@@ -1,0 +1,74 @@
+// BUILTIN_FONTS - 字体配置
+// 43 英文字体 + 18 中文字体
+
+export const BUILTIN_FONTS = [
+  // Sans-serif
+  { name: 'Inter', value: '"Inter", system-ui, sans-serif' },
+  { name: 'Roboto', value: '"Roboto", sans-serif' },
+  { name: 'Open Sans', value: '"Open Sans", sans-serif' },
+  { name: 'Lato', value: '"Lato", sans-serif' },
+  { name: 'Montserrat', value: '"Montserrat", sans-serif' },
+  { name: 'Oswald', value: '"Oswald", sans-serif' },
+  { name: 'Raleway', value: '"Raleway", sans-serif' },
+  { name: 'Poppins', value: '"Poppins", sans-serif' },
+  { name: 'Nunito', value: '"Nunito", sans-serif' },
+  { name: 'Source Sans', value: '"Source Sans Pro", sans-serif' },
+  { name: 'PT Sans', value: '"PT Sans", sans-serif' },
+  { name: 'Ubuntu', value: '"Ubuntu", sans-serif' },
+  { name: 'Fira Sans', value: '"Fira Sans", sans-serif' },
+  { name: 'Work Sans', value: '"Work Sans", sans-serif' },
+  { name: 'Mulish', value: '"Mulish", sans-serif' },
+  { name: 'Noto Sans', value: '"Noto Sans", sans-serif' },
+  // Serif
+  { name: 'Playfair Display', value: '"Playfair Display", serif' },
+  { name: 'Merriweather', value: '"Merriweather", serif' },
+  { name: 'Lora', value: '"Lora", serif' },
+  { name: 'Crimson Text', value: '"Crimson Text", serif' },
+  { name: 'Libre Baskerville', value: '"Libre Baskerville", serif' },
+  { name: 'Georgia', value: 'Georgia, serif' },
+  { name: 'Times New Roman', value: '"Times New Roman", serif' },
+  { name: 'PT Serif', value: '"PT Serif", serif' },
+  { name: 'Source Serif', value: '"Source Serif Pro", serif' },
+  // Display/Decorative
+  { name: 'Bebas Neue', value: '"Bebas Neue", cursive' },
+  { name: 'Abril Fatface', value: '"Abril Fatface", cursive' },
+  { name: 'Lobster', value: '"Lobster", cursive' },
+  { name: 'Pacifico', value: '"Pacifico", cursive' },
+  { name: 'Dancing Script', value: '"Dancing Script", cursive' },
+  { name: 'Satisfy', value: '"Satisfy", cursive' },
+  { name: 'Righteous', value: '"Righteous", cursive' },
+  { name: 'Alfa Slab', value: '"Alfa Slab One", cursive' },
+  { name: 'Anton', value: '"Anton", sans-serif' },
+  { name: 'Bungee', value: '"Bungee", cursive' },
+  // Monospace
+  { name: 'JetBrains Mono', value: '"JetBrains Mono", monospace' },
+  { name: 'Fira Code', value: '"Fira Code", monospace' },
+  { name: 'Source Code', value: '"Source Code Pro", monospace' },
+  { name: 'Inconsolata', value: '"Inconsolata", monospace' },
+  { name: 'Roboto Mono', value: '"Roboto Mono", monospace' },
+  { name: 'Courier New', value: '"Courier New", monospace' },
+  // Chinese fonts
+  { name: '微软雅黑', value: '"Microsoft YaHei", sans-serif' },
+  { name: '微软雅黑 Bold', value: '"Microsoft YaHei", "Microsoft YaHei Bold", sans-serif' },
+  { name: '黑体', value: 'SimHei, "STHeiti", sans-serif' },
+  { name: '宋体', value: 'SimSun, "STSong", serif' },
+  { name: '楷体', value: 'KaiTi, "STKaiti", serif' },
+  { name: '仿宋', value: 'FangSong, "STFangsong", serif' },
+  { name: '幼圆', value: 'YouYuan, sans-serif' },
+  { name: '华文黑体', value: '"STHeiti", sans-serif' },
+  { name: '华文宋体', value: '"STSong", serif' },
+  { name: '华文楷体', value: '"STKaiti", serif' },
+  { name: '华文仿宋', value: '"STFangsong", serif' },
+  { name: '思源黑体', value: '"Source Han Sans SC", "Noto Sans SC", sans-serif' },
+  { name: '思源宋体', value: '"Source Han Serif SC", "Noto Serif SC", serif' },
+  { name: '苹方', value: '"PingFang SC", sans-serif' },
+  { name: '苹方-简', value: '"PingFang SC Regular", sans-serif' },
+  { name: '苹方-中', value: '"PingFang SC Medium", sans-serif' },
+  { name: '苹方-粗', value: '"PingFang SC Semibold", sans-serif' },
+];
+
+// Font imports - import these in App.tsx
+export const FONT_IMPORTS = [
+  // Keep existing @fontsource imports in App.tsx
+  // Add new fonts here when needed
+];

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="DesignEasy Pro — 专业在线设计工具，预设模板 · 自由创作 · 高质量导出" />
+    <meta property="og:title" content="DesignEasy Pro" />
+    <meta property="og:description" content="专业在线设计工具，预设模板 · 自由创作 · 高质量导出" />
+    <meta property="og:type" content="website" />
+    <title>DesignEasy Pro</title>
+    <style>
+      :root {
+        --glass-bg: rgba(255, 255, 255, 0.68);
+        --glass-border: rgba(99, 110, 123, 0.12);
+        --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+        --panel-bg: rgba(248, 250, 253, 0.85);
+        --accent: #475569;
+        --accent-soft: #94a3b8;
+        --canvas-dot: rgba(71, 85, 105, 0.12);
+        --selection-ring: #64748b;
+        --selection-glow: rgba(100, 116, 139, 0.18);
+        --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        --radius-sm: 10px;
+        --radius-md: 14px;
+        --radius-lg: 20px;
+      }
+      .dark {
+        --glass-bg: rgba(30, 33, 41, 0.78);
+        --glass-border: rgba(255, 255, 255, 0.08);
+        --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.25);
+        --panel-bg: rgba(24, 26, 33, 0.88);
+        --accent: #e2e8f0;
+        --accent-soft: #94a3b8;
+        --canvas-dot: rgba(226, 232, 240, 0.07);
+        --selection-ring: #94a3b8;
+        --selection-glow: rgba(148, 163, 184, 0.22);
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; padding: 0; background: #eef1f6; }
+      ::-webkit-scrollbar { width: 4px; height: 4px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: rgba(99, 110, 123, 0.18); border-radius: 999px; }
+      ::selection { background: rgba(99, 110, 123, 0.12); }
+      .dark ::selection { background: rgba(148, 163, 184, 0.18); }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
