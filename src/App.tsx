@@ -898,18 +898,12 @@ const App = () => {
     return () => { window.removeEventListener('keydown', down); window.removeEventListener('keyup', up); };
   }, []);
 
-  // Mouse wheel zoom on canvas
+  // Mouse wheel zoom on canvas — DISABLED
   useEffect(() => {
-    const handler = (e) => {
-      if (isPreviewMode) return;
-      if (e.target.closest('aside, nav, input, select')) return;
-      e.preventDefault();
-      const delta = e.deltaY > 0 ? -0.05 : 0.05;
-      setZoom(prev => Math.max(0.1, Math.min(3, prev + delta * prev)));
-    };
-    window.addEventListener('wheel', handler, { passive: false });
-    return () => window.removeEventListener('wheel', handler);
-  }, [isPreviewMode]);
+    // Intentionally disabled: zoom was confusing for users
+    // (view zoom doesn't affect export, so it added no value)
+    return () => {};
+  }, []);
 
   // Close context menu on click
   useEffect(() => {
