@@ -919,6 +919,7 @@ const App = () => {
                         recentColors={recentColors}
                         onPresetClick={(v) => { updateBatchLayers({ color: v } as any); addRecentColor(v); }}
                       />
+                      <PropertySlider label={t.opacity} value={selectedLayer.opacity} min={0} max={1} step={0.05} onChange={(v) => updateBatchLayers({ opacity: v } as Partial<Layer>)} />
                       {selectedLayer.type === 'rect' && (
                         <>
                           <PropertySlider label="宽度" value={(selectedLayer as any).width ?? 200} min={10} max={2000} onChange={(v) => updateBatchLayers({ width: v } as any)} />
