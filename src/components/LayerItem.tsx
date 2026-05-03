@@ -46,8 +46,8 @@ export const LayerItem = memo(({ layer, isSelected, isPreview, onStartDrag, onSt
         </>
       )}
       {layer.type === 'text' ? (
-        <div style={{ fontSize: `${layer.fontSize}px`, color: layer.color, fontWeight: layer.fontWeight, fontFamily: layer.fontFamily, fontStyle: (layer as any).fontStyle ?? 'normal', letterSpacing: `${layer.letterSpacing ?? 0}px`, lineHeight: layer.lineHeight ?? 1.2 }} 
-          className="whitespace-nowrap px-6 py-2 outline-none text-center" 
+        <div style={{ fontSize: `${layer.fontSize}px`, color: layer.color, fontWeight: layer.fontWeight, fontFamily: layer.fontFamily, fontStyle: (layer as any).fontStyle ?? 'normal', letterSpacing: `${layer.letterSpacing ?? 0}px`, lineHeight: layer.lineHeight ?? 1.2, textAlign: (layer as any).textAlign ?? 'left' }} 
+          className="whitespace-nowrap px-6 py-2 outline-none" 
           contentEditable={!isPreview && isSelected && !layer.isLocked} 
           onBlur={(e) => onUpdateContent(layer.id, { content: e.target.innerText } as any)} 
           suppressContentEditableWarning={true}>{layer.content}</div>

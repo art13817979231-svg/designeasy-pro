@@ -861,7 +861,7 @@ const App = () => {
                           {allFonts.map(f => <option key={f.value} value={f.value}>{f.name}</option>)}
                         </select>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 mb-4">
                         <button onClick={() => {
                           const current = parseInt(selectedLayer.fontWeight);
                           const next = current >= 700 ? '400' : '900';
@@ -879,6 +879,16 @@ const App = () => {
                           : `${darkMode ? 'bg-slate-800 border border-slate-700 text-slate-400' : 'bg-white border border-slate-100 text-slate-400'}`}`}>
                           <Italic size={13}/> Italic
                         </button>
+                      </div>
+                      <div className="flex gap-1.5 mb-4">
+                        {(['left', 'center', 'right'] as const).map(align => (
+                          <button key={align} onClick={() => updateBatchLayers({ textAlign: align } as Partial<Layer>)}
+                            className={`flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1 transition-all ${(selectedLayer as any).textAlign === align || (!(selectedLayer as any).textAlign && align === 'left')
+                              ? 'bg-black text-white dark:bg-white dark:text-black shadow-md' 
+                              : `${darkMode ? 'bg-slate-800 border border-slate-700 text-slate-400 border border-slate-700/50' : 'bg-white border border-zinc-100 text-slate-400'}`}`}>
+                            {align === 'left' ? <AlignLeft size={12}/> : align === 'center' ? <AlignCenter size={12}/> : <AlignRight size={12}/>}
+                          </button>
+                        ))}
                       </div>
                       <PropertySlider label="字号" value={selectedLayer.fontSize} min={8} max={500} onChange={(v) => updateBatchLayers({ fontSize: v } as Partial<Layer>)} />
                       <PropertySlider label={t.spacing} value={selectedLayer.letterSpacing} min={-40} max={100} onChange={(v) => updateBatchLayers({ letterSpacing: v } as Partial<Layer>)} />
