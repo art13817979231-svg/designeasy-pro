@@ -25,7 +25,7 @@ export const LayerItem = memo(({ layer, isSelected, isPreview, onStartDrag, onSt
       className={`absolute select-none ${!isPreview && isSelected ? 'z-50 cursor-move' : 'hover:cursor-move'} ${layer.isLocked ? 'cursor-not-allowed' : ''}`} 
       style={{ 
         left: `${layer.x}%`, top: `${layer.y}%`, 
-        transform: `translate(-50%, -50%) rotate(${layer.rotate ?? 0}deg) scale(${layer.scale ?? 1})`, 
+        transform: `translate(-50%, -50%) rotate(${layer.rotate ?? 0}deg) scale(${(layer as any).scaleX ?? (layer.scale ?? 1)}, ${(layer as any).scaleY ?? (layer.scale ?? 1)})`, 
         zIndex: index, opacity: layer.opacity ?? 1,
         outline: !isPreview && isSelected ? '1px dashed var(--selection-ring)' : 'none',
         outlineOffset: '3px',

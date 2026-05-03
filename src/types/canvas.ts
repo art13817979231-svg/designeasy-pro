@@ -10,7 +10,9 @@ export interface BaseLayer {
   type: LayerType;
   x: number;       // X position (% of canvas width)
   y: number;       // Y position (% of canvas height)
-  scale: number;   // Scale factor
+  scale: number;   // Legacy uniform scale (kept for backward compat)
+  scaleX?: number; // Independent X scale (defaults to 1)
+  scaleY?: number; // Independent Y scale (defaults to 1)
   rotate: number;  // Rotation (degrees)
   opacity: number; // Opacity 0-1
   isLocked: boolean;

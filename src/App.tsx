@@ -228,7 +228,9 @@ const App = () => {
   // Interaction tracking
   const interactionRef = useRef({
     dragging: false, resizing: false, isPreviewMode: false,
-    startPos: { x: 0, y: 0 }, startScale: 1, startDist: 1, resizeCorner: null as string | null,
+    startPos: { x: 0, y: 0 }, startScale: 1, startScaleX: 1, startScaleY: 1,
+    startDist: 1, startMousePos: { x: 0, y: 0 },
+    resizeCorner: null as string | null,
     editingTextId: null as string | null,
   });
   const pendingRafRef = useRef<number | null>(null);
@@ -314,12 +316,10 @@ const App = () => {
     if (!layer || layer.isLocked) return;
     interactionRef.current.resizing = true;
     interactionRef.current.resizeCorner = corner;
-    const rect = canvasRef.current!.getBoundingClientRect();
-    const cx = (layer.x / 100) * rect.width + rect.left;
-    const cy = (layer.y / 100) * rect.height + rect.top;
-    const dist = Math.sqrt(Math.pow(e.clientX - cx, 2) + Math.pow(e.clientY - cy, 2));
     interactionRef.current.startScale = layer.scale || 1;
-    interactionRef.current.startDist = dist || 1;
+    interactionRef.current.startScaleX = (layer as any).scaleX || 1;
+    interactionRef.current.startScaleY = (layer as any).scaleY || 1;
+    interactionRef.current.startMousePos = { x: e.clientX, y: e.clientY };
   }, [layers]);
 
   const handleGlobalMouseMove = useCallback((e: MouseEvent) => {
@@ -363,13 +363,42 @@ const App = () => {
         setLayers(prev => {
           const sel = prev.find(l => l.id === selectedIds[0]);
           if (!sel) return prev;
-          const cx = (sel.x / 100) * rect.width + rect.left;
-          const cy = (sel.y / 100) * rect.height + rect.top;
-          const curDist = Math.sqrt(Math.pow(ev.clientX - cx, 2) + Math.pow(ev.clientY - cy, 2));
-          const newScale = interactionRef.current.startScale * (curDist / (interactionRef.current.startDist || 1));
-          if (isNaN(newScale)) return prev;
-          const s = Math.max(0.1, Math.min(5, newScale));
-          return prev.map(l => selectedIds.includes(l.id) ? { ...l, scale: s } : l);
+          const corner = interactionRef.current.resizeCorner;
+          const start = interactionRef.current.startMousePos;
+          const dx = ev.clientX - start.x;
+          const dy = ev.clientY - start.y;
+          // Use canvas size for sensitivity normalization
+          const sensitivity = 0.005; // per pixel
+          const baseSX = interactionRef.current.startScaleX;
+          const baseSY = interactionRef.current.startScaleY;
+
+          let newScaleX = baseSX;
+          let newScaleY = baseSY;
+
+          // Determine X/Y scale changes based on corner direction
+          // Horizontal: 'e' corners (ne, se) increase X on right drag, 'w' corners (nw, sw) decrease
+          // Vertical: 's' corners (sw, se) increase Y on down drag, 'n' corners (ne, nw) decrease
+          if (corner?.includes('e')) newScaleX = baseSX * (1 + dx * sensitivity);
+          if (corner?.includes('w')) newScaleX = baseSX * (1 - dx * sensitivity);
+          if (corner?.includes('s')) newScaleY = baseSY * (1 + dy * sensitivity);
+          if (corner?.includes('n')) newScaleY = baseSY * (1 - dy * sensitivity);
+
+          // Shift key = lock aspect ratio (uniform scale)
+          if (ev.shiftKey) {
+            const avgScale = (newScaleX + newScaleY) / 2;
+            newScaleX = avgScale;
+            newScaleY = avgScale;
+          }
+
+          if (isNaN(newScaleX) || isNaN(newScaleY)) return prev;
+          const clampedX = Math.max(0.05, Math.min(5, newScaleX));
+          const clampedY = Math.max(0.05, Math.min(5, newScaleY));
+          return prev.map(l => selectedIds.includes(l.id) ? {
+            ...l,
+            scaleX: clampedX,
+            scaleY: clampedY,
+            scale: Math.sqrt(clampedX * clampedY), // keep legacy field in sync
+          } : l);
         });
       }
     });
