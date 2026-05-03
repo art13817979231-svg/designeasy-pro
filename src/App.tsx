@@ -63,6 +63,9 @@ const App = () => {
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
+  const [exportPreset, setExportPreset] = useState<'1x' | '2x' | '3x' | 'custom'>('3x');
+  const [exportW, setExportW] = useState<number | null>(null);
+  const [exportH, setExportH] = useState<number | null>(null);
   const [guides, setGuides] = useState<{ x: number | null; y: number | null }>({ x: null, y: null });
   const [customFonts, setCustomFonts] = useState<{ name: string; value: string }[]>([]);
   const [darkMode, setDarkMode] = useState(false);
@@ -73,6 +76,7 @@ const App = () => {
   const [isPanning, setIsPanning] = useState(false);
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; layerId: string } | null>(null);
+  const [copiedLayers, setCopiedLayers] = useState<Partial<Layer>[] | null>(null);
   const spaceRef = useRef(false);
   const panStartRef = useRef({ x: 0, y: 0, ox: 0, oy: 0 });
 
@@ -253,8 +257,16 @@ const App = () => {
     setSelectedIds([]);
     try {
       await new Promise(r => setTimeout(r, 100));
-      const options = { 
-        pixelRatio: 3, 
+      // Compute pixel ratio: if custom size set, derive from target pixel dims vs canvas display size
+      let pixelRatio = 3;
+      if (exportW && exportH) {
+        const canvasDisplayW = canvasRef.current.offsetWidth;
+        const canvasDisplayH = canvasRef.current.offsetHeight;
+        pixelRatio = Math.max(1, Math.round(exportW / canvasDisplayW), Math.round(exportH / canvasDisplayH));
+      } else if (exportPreset === '1x') pixelRatio = 1;
+      else if (exportPreset === '2x') pixelRatio = 2;
+      const options = {
+        pixelRatio,
         cacheBust: true,
         filter: (node: HTMLElement) => !node.classList?.contains('no-export'),
       };
@@ -286,7 +298,7 @@ const App = () => {
       setSelectedIds(prevSelected);
       setIsExporting(false);
     }
-  }, [canvasBg, selectedIds]);
+  }, [canvasBg, selectedIds, exportPreset, exportW, exportH]);
 
   // Drag
   const handleStartDrag = useCallback((e: React.MouseEvent, id: string) => {
@@ -455,6 +467,8 @@ const App = () => {
       if (isMod && e.key === 'z' && !e.shiftKey) { e.preventDefault(); undo(); return; }
       if ((isMod && e.key === 'z' && e.shiftKey) || (isMod && e.key === 'y')) { e.preventDefault(); redo(); return; }
       if (isMod && e.key === 'd') { e.preventDefault(); duplicateSelected(); return; }
+      if (isMod && e.key === 'c') { e.preventDefault(); setCopiedLayers(selectedIds.map(id => { const l = layers.find(x=>x.id===id); return l ? {...l} : null; }).filter(Boolean) as Partial<Layer>[]); return; }
+      if (isMod && e.key === 'v') { e.preventDefault(); if (!copiedLayers?.length) return; const newLayers = copiedLayers.map(l => ({ ...l, id: `l-${Date.now()}-${Math.random().toString(36).substr(2,9)}`, x: (l.x ?? 50)+3, y: (l.y ?? 50)+3 })); setLayers(p => [...p, ...newLayers as Layer[]]); setSelectedIds(newLayers.map(l => l!.id as string)); return; }
       if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); deleteSelected(); return; }
       if (isMod && e.key === 'a') { e.preventDefault(); setSelectedIds(layers.map(l => l.id)); return; }
       if (selectedIds.length > 0 && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
@@ -472,7 +486,7 @@ const App = () => {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [isPreviewMode, selectedIds, layers, undo, redo, duplicateSelected, deleteSelected, setLayers]);
+  }, [isPreviewMode, selectedIds, layers, undo, redo, duplicateSelected, deleteSelected, setLayers, copiedLayers]);
 
   return (
     <div className={`flex h-screen text-slate-900 font-sans overflow-hidden select-none transition-colors duration-300 ${darkMode ? 'bg-[#0F1117] text-slate-100' : 'bg-[#F8FAFC] text-slate-900'}`}>
@@ -562,15 +576,32 @@ const App = () => {
               <Eye size={13}/> {t.preview}
             </button>
             <div className="relative" ref={exportMenuRef}>
-              <button onClick={() => setExportMenuOpen(!exportMenuOpen)} 
+      <button onClick={() => setExportMenuOpen(!exportMenuOpen)} 
                 className="bg-slate-600 dark:bg-white hover:bg-zinc-700 dark:hover:bg-zinc-200 text-white dark:text-slate-700 
                   px-5 py-2 rounded-2xl text-[10px] font-black tracking-[0.15em] flex items-center gap-2.5 
                   transition-all duration-200 hover:shadow-xl shadow-lg shadow-black/15">
                 <Download size={13} /> {t.export}
               </button>
               {exportMenuOpen && (
-                <div className={`absolute right-0 top-full mt-2.5 w-52 rounded-2xl shadow-xl shadow-black/8 border overflow-hidden z-[300] backdrop-blur-xl
+                <div className={`absolute right-0 top-full mt-2.5 w-60 rounded-2xl shadow-xl shadow-black/8 border overflow-hidden z-[300] backdrop-blur-xl
                   ${darkMode ? 'bg-slate-600/95 border-zinc-800/70' : 'bg-white/95 border-zinc-200/80'}`}>
+                  <div className={`px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest ${darkMode ? 'text-zinc-400 border-b border-zinc-700' : 'text-zinc-400 border-b border-zinc-100'}`}>导出尺寸</div>
+                  <div className="flex gap-1 px-3 py-2">
+                    {[{label:'1x',px:1},{label:'2x',px:2},{label:'3x',px:3}].map(p => (
+                      <button key={p.label} onClick={() => { setExportPreset(p.label as '1x'|'2x'|'3x'); setExportW(null); setExportH(null); }}
+                        className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all ${exportPreset===p.label&&!exportW ? 'bg-slate-700 text-white dark:bg-white dark:text-slate-700' : darkMode?'text-zinc-400 hover:bg-slate-700':'text-zinc-400 hover:bg-zinc-100'}`}>{p.label}</button>
+                    ))}
+                    <button onClick={() => setExportPreset('custom')}
+                      className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all ${exportPreset==='custom'||exportW ? 'bg-slate-700 text-white dark:bg-white dark:text-slate-700' : darkMode?'text-zinc-400 hover:bg-slate-700':'text-zinc-400 hover:bg-zinc-100'}`}>自定义</button>
+                  </div>
+                  {exportPreset === 'custom' && (
+                    <div className="px-3 pb-3 flex items-center gap-2">
+                      <input type="number" value={exportW ?? ''} onChange={e => { const v=parseInt(e.target.value); if(v>0){setExportW(v);setExportH(Math.round(v/canvasRatio.value));} }} placeholder="宽" className={`w-full px-2 py-1.5 rounded-lg text-[11px] border ${darkMode?'bg-slate-800 border-zinc-700 text-white':'bg-zinc-50 border-zinc-200 text-slate-700'} placeholder:text-zinc-400`} />
+                      <span className={`text-[10px] font-bold ${darkMode?'text-zinc-500':'text-zinc-400'}`}>×</span>
+                      <input type="number" value={exportH ?? ''} onChange={e => { const v=parseInt(e.target.value); if(v>0){setExportH(v);setExportW(Math.round(v*canvasRatio.value));} }} placeholder="高" className={`w-full px-2 py-1.5 rounded-lg text-[11px] border ${darkMode?'bg-slate-800 border-zinc-700 text-white':'bg-zinc-50 border-zinc-200 text-slate-700'} placeholder:text-zinc-400`} />
+                    </div>
+                  )}
+                  <div className={`border-t ${darkMode?'border-zinc-700':'border-zinc-100'}`} />
                   <button onClick={() => handleExport('png')} 
                     className={`w-full text-left px-4 py-3.5 text-[11px] font-semibold flex items-center gap-3 transition-colors ${darkMode ? 'hover:bg-slate-700 text-zinc-200' : 'hover:bg-zinc-50 text-zinc-700'}`}>
                     <div className="w-5 h-5 rounded-md bg-gradient-to-br from-blue-400 to-blue-600"/> PNG 图片

@@ -19,7 +19,7 @@ export const LayerItem = memo(({ layer, isSelected, isPreview, onStartDrag, onSt
   
   return (
     <div 
-      onMouseDown={(e) => onStartDrag(e, layer.id)} 
+      onMouseDown={(e) => { if (layer.isLocked) { e.preventDefault(); return; } onStartDrag(e, layer.id); }} 
       onDoubleClick={() => onDoubleClick?.(layer.id)}
       onContextMenu={(e) => { e.preventDefault(); onContextMenu?.(e, layer.id); }}
       className={`absolute select-none ${!isPreview && isSelected ? 'z-50 cursor-move' : 'hover:cursor-move'} ${layer.isLocked ? 'cursor-not-allowed' : ''}`} 
