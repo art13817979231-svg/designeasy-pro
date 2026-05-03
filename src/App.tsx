@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { toPng, toJpeg, toSvg } from 'html-to-image';
+import jsPDF from 'jspdf';
 
 // Local fonts — no external network requests
 import '@fontsource/inter/400.css';
@@ -70,6 +71,8 @@ const App = () => {
   const [customFonts, setCustomFonts] = useState<{ name: string; value: string }[]>([]);
   const [darkMode, setDarkMode] = useState(false);
   const [showGrid, setShowGrid] = useState(false);
+  const [gridSnap, setGridSnap] = useState(true); // default on
+  const [showShortcuts, setShowShortcuts] = useState(false);
   const [recentColors, setRecentColors] = useState<string[]>([]);
   const [addingType, setAddingType] = useState<string | null>(null);
   const [canvasGradient, setCanvasGradient] = useState<{ from: string; to: string; angle: number } | null>(null);
@@ -257,12 +260,27 @@ const App = () => {
     setSelectedIds([]);
     try {
       await new Promise(r => setTimeout(r, 100));
-      // Compute pixel ratio: if custom size set, derive from target pixel dims vs canvas display size
+
+      if (format === 'pdf') {
+        // PDF: render canvas to PNG, embed in jsPDF
+        const pixelRatio = exportW ? Math.max(1, Math.round(exportW / canvasRef.current.offsetWidth)) : 3;
+        const dataUrl = await toPng(canvasRef.current, { pixelRatio, cacheBust: true });
+        const img = new window.Image();
+        img.src = dataUrl;
+        await new Promise(resolve => { img.onload = resolve; });
+        const orient = img.naturalWidth >= img.naturalHeight ? 'landscape' : 'portrait';
+        const pdf = new jsPDF({ orientation: orient, unit: 'px', format: [img.naturalWidth, img.naturalHeight] });
+        pdf.addImage(dataUrl, 'PNG', 0, 0, img.naturalWidth, img.naturalHeight);
+        pdf.save(`designeasy-${Date.now()}.pdf`);
+        setSelectedIds(prevSelected);
+        setIsExporting(false);
+        return;
+      }
+
+      // PNG / JPG / SVG
       let pixelRatio = 3;
       if (exportW && exportH) {
-        const canvasDisplayW = canvasRef.current.offsetWidth;
-        const canvasDisplayH = canvasRef.current.offsetHeight;
-        pixelRatio = Math.max(1, Math.round(exportW / canvasDisplayW), Math.round(exportH / canvasDisplayH));
+        pixelRatio = Math.max(1, Math.round(exportW / canvasRef.current.offsetWidth), Math.round(exportH / canvasRef.current.offsetHeight));
       } else if (exportPreset === '1x') pixelRatio = 1;
       else if (exportPreset === '2x') pixelRatio = 2;
       const options = {
@@ -271,13 +289,9 @@ const App = () => {
         filter: (node: HTMLElement) => !node.classList?.contains('no-export'),
       };
       let dataUrl;
-      if (format === 'jpg') {
-        dataUrl = await toJpeg(canvasRef.current, options);
-      } else if (format === 'svg') {
-        dataUrl = await toSvg(canvasRef.current, options);
-      } else {
-        dataUrl = await toPng(canvasRef.current, options);
-      }
+      if (format === 'jpg') dataUrl = await toJpeg(canvasRef.current, options);
+      else if (format === 'svg') dataUrl = await toSvg(canvasRef.current, options);
+      else dataUrl = await toPng(canvasRef.current, options);
       const link = document.createElement('a');
       link.download = `designeasy-${Date.now()}.${format}`;
       link.href = dataUrl;
@@ -352,6 +366,9 @@ const App = () => {
           const init = initialLayersRef.current.find(p => p.id === l.id);
           if (init) {
             let nx = init.x + dw, ny = init.y + dh;
+            if (!gridSnap) {
+              return { ...l, x: nx, y: ny };
+            }
             if (Math.abs(nx - 50) < 1.2) { nx = 50; setGuides(g => ({...g, x: 50})); } else setGuides(g => ({...g, x: null}));
             if (Math.abs(ny - 50) < 1.2) { ny = 50; setGuides(g => ({...g, y: 50})); } else setGuides(g => ({...g, y: null}));
             const others = prev.filter(o => o.id !== l.id);
@@ -483,6 +500,7 @@ const App = () => {
         else setIsPreviewMode(false);
       }
       if (e.key === 'p' && !isMod) { setIsPreviewMode(true); setSelectedIds([]); }
+      if (e.key === '?' && !isMod) { setShowShortcuts(true); }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
@@ -566,6 +584,10 @@ const App = () => {
               className={`p-2 rounded-xl transition-all duration-200 ${showGrid ? 'bg-slate-600 text-white dark:bg-white dark:text-slate-700 shadow-lg' : 'text-zinc-400 hover:text-slate-700 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-slate-700'}`}>
               <Grid3X3 size={15}/>
             </button>
+            <button onClick={() => setGridSnap(!gridSnap)} 
+              className={`p-2 rounded-xl transition-all duration-200 ${gridSnap ? 'bg-slate-600 text-white dark:bg-white dark:text-slate-700 shadow-lg' : 'text-zinc-400 hover:text-slate-700 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-slate-700'}`}>
+              <LayoutGrid size={15}/>
+            </button>
             <button onClick={() => setDarkMode(!darkMode)} 
               className={`p-2 rounded-xl transition-all duration-200 ${darkMode ? 'bg-slate-600 text-white dark:bg-white dark:text-slate-700 shadow-lg' : 'text-zinc-400 hover:text-slate-700 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-slate-700'}`}>
               {darkMode ? <Sun size={15}/> : <Moon size={15}/>}
@@ -613,6 +635,11 @@ const App = () => {
                   <button onClick={() => handleExport('svg')} 
                     className={`w-full text-left px-4 py-3.5 text-[11px] font-semibold flex items-center gap-3 transition-colors ${darkMode ? 'hover:bg-slate-700 text-zinc-200' : 'hover:bg-zinc-50 text-zinc-700'}`}>
                     <div className="w-5 h-5 rounded-md bg-gradient-to-br from-green-400 to-green-600"/> SVG 矢量
+                  </button>
+                  <div className={`border-t ${darkMode?'border-zinc-700':'border-zinc-100'}`} />
+                  <button onClick={() => { setExportMenuOpen(false); handleExport('pdf'); }} 
+                    className={`w-full text-left px-4 py-3.5 text-[11px] font-semibold flex items-center gap-3 transition-colors ${darkMode ? 'hover:bg-slate-700 text-zinc-200' : 'hover:bg-zinc-50 text-zinc-700'}`}>
+                    <div className="w-5 h-5 rounded-md bg-gradient-to-br from-red-400 to-red-600"/> PDF 文档
                   </button>
                 </div>
               )}
@@ -1001,6 +1028,42 @@ const App = () => {
           </aside>
         )}
       </div>
+
+      {/* Shortcuts Modal */}
+      {showShortcuts && (
+        <div className="fixed inset-0 z-[600] flex items-center justify-center" onClick={() => setShowShortcuts(false)}>
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
+          <div className={`relative w-[400px] rounded-3xl shadow-2xl border overflow-hidden ${darkMode ? 'bg-slate-800/95 border-slate-700' : 'bg-white/95 border-slate-200'}`} onClick={e => e.stopPropagation()}>
+            <div className={`px-6 py-4 flex items-center justify-between border-b ${darkMode ? 'border-slate-700' : 'border-slate-100'}`}>
+              <h3 className="font-black text-[13px] tracking-[0.15em] uppercase">{lang === 'zh' ? '快捷键' : 'Shortcuts'}</h3>
+              <button onClick={() => setShowShortcuts(false)} className="p-1 rounded-lg hover:bg-zinc-100 dark:hover:bg-slate-700"><X size={16}/></button>
+            </div>
+            <div className={`p-5 grid grid-cols-2 gap-y-2 text-[11px] ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+              {[
+                ['⌘Z / ⌘⇧Z', lang==='zh' ? '撤销 / 重做' : 'Undo / Redo'],
+                ['⌘D', lang==='zh' ? '复制图层' : 'Duplicate'],
+                ['⌘C / ⌘V', lang==='zh' ? '复制 / 粘贴图层' : 'Copy / Paste'],
+                ['DEL', lang==='zh' ? '删除' : 'Delete'],
+                ['↑↓←→', lang==='zh' ? '微调 1px' : 'Move 1px'],
+                ['⇧+方向键', lang==='zh' ? '移动 5px' : 'Move 5px'],
+                ['P', lang==='zh' ? '预览' : 'Preview'],
+                ['ESC', lang==='zh' ? '取消选择' : 'Deselect'],
+                ['Space+拖动', lang==='zh' ? '拖动画布' : 'Pan Canvas'],
+                ['Shift+拖动', lang==='zh' ? '等比缩放' : 'Scale Uniformly'],
+                ['双击文字', lang==='zh' ? '编辑文字' : 'Edit Text'],
+                ['右键', lang==='zh' ? '上下文菜单' : 'Context Menu'],
+                ['⌘A', lang==='zh' ? '全选图层' : 'Select All'],
+                ['?', lang==='zh' ? '打开本面板' : 'Open This Panel'],
+              ].map(([key, label]) => (
+                <div key={key} className="flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-slate-700/50">
+                  <span>{label}</span>
+                  <kbd className="font-mono font-bold text-[9px] px-2 py-1 rounded bg-zinc-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400">{key}</kbd>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {isExporting && (
         <div className="fixed inset-0 z-[400] bg-white/95 dark:bg-[#0F1117]/95 backdrop-blur-xl flex items-center justify-center">
