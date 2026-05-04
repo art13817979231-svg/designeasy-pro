@@ -52,9 +52,9 @@ export const LayerItem = memo(({ layer, isSelected, isPreview, onStartDrag, onSt
           onBlur={(e) => onUpdateContent(layer.id, { content: e.target.innerText } as any)} 
           suppressContentEditableWarning={true}>{layer.content}</div>
       ) : layer.type === 'rect' ? (
-        <div style={{ width: `${(layer as any).width ?? 200}px`, height: `${(layer as any).height ?? 200}px`, backgroundColor: (layer as any).color ?? '#000000', opacity: layer.opacity ?? 1, borderRadius: `${(layer as any).borderRadius ?? 0}px`, border: (layer as any).borderWidth ? `${(layer as any).borderWidth}px solid ${(layer as any).borderColor ?? '#000'}` : 'none' }} className="pointer-events-none" />
+        <div style={{ width: `${(layer as any).width ?? 200}px`, height: `${(layer as any).height ?? 200}px`, backgroundColor: (layer as any).color ?? '#000000', borderRadius: `${(layer as any).borderRadius ?? 0}px`, border: (layer as any).borderWidth ? `${(layer as any).borderWidth}px solid ${(layer as any).borderColor ?? '#000'}` : 'none' }} className="pointer-events-none" />
       ) : layer.type === 'circle' ? (
-        <div style={{ width: `${(layer as any).width ?? 200}px`, height: `${(layer as any).width ?? 200}px`, backgroundColor: (layer as any).color ?? '#000000', opacity: layer.opacity ?? 1, borderRadius: '50%' }} className="pointer-events-none" />
+        <div style={{ width: `${(layer as any).width ?? 200}px`, height: `${(layer as any).width ?? 200}px`, backgroundColor: (layer as any).color ?? '#000000', borderRadius: '50%' }} className="pointer-events-none" />
       ) : (
         <img src={layer.content} alt="asset" className="pointer-events-none object-cover" 
           style={{ opacity: layer.opacity ?? 1, width: (layer as any).imgWidth ? `${(layer as any).imgWidth}px` : undefined, height: (layer as any).imgHeight ? `${(layer as any).imgHeight}px` : undefined, maxWidth: (layer as any).imgWidth ? undefined : '4000px', borderRadius: `${layer.borderRadius ?? 0}px`, filter: `grayscale(${(layer as any).grayscale ?? 0}%) blur(${(layer as any).blur ?? 0}px)` }} />
