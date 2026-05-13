@@ -1,17 +1,17 @@
 import type { AspectRatio, Template, Layer } from '../types/canvas';
 
 export const ASPEC_RATIOS: AspectRatio[] = [
-  { id: 'r1', name: '1:1', value: 1, label: "Square" }, 
-  { id: 'r2', name: '3:4', value: 4/3, label: "Magazine" }, 
-  { id: 'r3', name: '9:16', value: 16/9, label: "Poster" }, 
-  { id: 'r4', name: '16:9', value: 9/16, label: "Hero" }
+  { id: 'r1', name: '1:1', value: 1, label: "Square · 1080×1080 · Instagram/Facebook" }, 
+  { id: 'r2', name: '3:4', value: 4/3, label: "Portrait · 1080×1350 · Instagram/Facebook" }, 
+  { id: 'r3', name: '9:16', value: 16/9, label: "Story · 1080×1920 · IG/TikTok/FB Story" }, 
+  { id: 'r4', name: '16:9', value: 9/16, label: "Landscape · 1920×1080 · YouTube/LinkedIn" }
 ];
 
 export const TEMPLATES: Template[] = [
-  // ========== T1: 瑞士建筑 (Swiss Grid) — 3:4 白底 ==========
+  // ========== T1: 瑞士建筑 (Swiss Grid) — 3:4 Portrait Instagram ==========
   {
     id: 't1',
-    name: '瑞士建筑',
+    name: '瑞士建筑 · 3:4竖版',
     ratio: ASPEC_RATIOS[1],
     bg: '#FFFFFF',
     layers: [
@@ -22,10 +22,10 @@ export const TEMPLATES: Template[] = [
     ]
   },
 
-  // ========== T2: 时尚封面 (Luxe Cover) — 3:4 深色 ==========
+  // ========== T2: 时尚封面 (Luxe Cover) — 3:4 Portrait Instagram ==========
   {
     id: 't2',
-    name: '时尚封面',
+    name: '时尚封面 · 3:4竖版',
     ratio: ASPEC_RATIOS[1],
     bg: '#0F0F0F',
     layers: [
@@ -35,10 +35,10 @@ export const TEMPLATES: Template[] = [
     ]
   },
 
-  // ========== T3: 赛博霓虹 (Neon Cyber) — 9:16 竖版海报 ==========
+  // ========== T3: 赛博霓虹 (Neon Cyber) — 9:16 Story Instagram/TikTok ==========
   {
     id: 't3',
-    name: '赛博霓虹',
+    name: '赛博霓虹 · 9:16故事版',
     ratio: ASPEC_RATIOS[2],
     bg: '#0A0A0A',
     layers: [
@@ -50,10 +50,10 @@ export const TEMPLATES: Template[] = [
     ]
   },
 
-  // ========== T4: 莫兰迪花艺 (Morandi Bloom) — 1:1 方形 ==========
+  // ========== T4: 莫兰迪花艺 (Morandi Bloom) — 1:1 Square Instagram/Facebook ==========
   {
     id: 't4',
-    name: '莫兰迪花艺',
+    name: '莫兰迪花艺 · 1:1方形',
     ratio: ASPEC_RATIOS[0],
     bg: '#EDE8E0',
     layers: [
@@ -64,10 +64,10 @@ export const TEMPLATES: Template[] = [
     ]
   },
 
-  // ========== T5: 极简黑标 (Bold Black) — 16:9 横幅 ==========
+  // ========== T5: 极简黑标 (Bold Black) — 16:9 Landscape YouTube/LinkedIn ==========
   {
     id: 't5',
-    name: '极简黑标',
+    name: '极简黑标 · 16:9横版',
     ratio: ASPEC_RATIOS[3],
     bg: '#FAFAFA',
     layers: [
@@ -78,10 +78,10 @@ export const TEMPLATES: Template[] = [
     ]
   },
 
-  // ========== T6: 水墨意境 (Ink Wash) — 3:4 中国风 ==========
+  // ========== T6: 水墨意境 (Ink Wash) — 3:4 Portrait Instagram ==========
   {
     id: 't6',
-    name: '水墨意境',
+    name: '水墨意境 · 3:4竖版',
     ratio: ASPEC_RATIOS[1],
     bg: '#F5F0E8',
     layers: [
@@ -92,10 +92,10 @@ export const TEMPLATES: Template[] = [
     ]
   },
 
-  // ========== T7: 复古唱片 (Retro Vinyl) — 1:1 方形暖色 ==========
+  // ========== T7: 复古唱片 (Retro Vinyl) — 1:1 Square Instagram/Facebook ==========
   {
     id: 't7',
-    name: '复古唱片',
+    name: '复古唱片 · 1:1方形',
     ratio: ASPEC_RATIOS[0],
     bg: '#F2E6D4',
     layers: [
@@ -106,10 +106,10 @@ export const TEMPLATES: Template[] = [
     ]
   },
 
-  // ========== T8: 科技发布会 (Tech Launch) — 9:16 竖版深色 ==========
+  // ========== T8: 科技发布会 (Tech Launch) — 9:16 Story IG/TikTok ==========
   {
     id: 't8',
-    name: '科技发布会',
+    name: '科技发布会 · 9:16故事版',
     ratio: ASPEC_RATIOS[2],
     bg: '#000000',
     layers: [
