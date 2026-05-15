@@ -2,7 +2,7 @@
 // DesignEasy Pro — Layer & Canvas Type Definitions
 // ============================================================
 
-export type LayerType = 'text' | 'image' | 'rect' | 'circle';
+export type LayerType = 'text' | 'image' | 'rect' | 'circle' | 'triangle' | 'arrow' | 'line' | 'star';
 
 // --- Base Layer ---
 export interface BaseLayer {
@@ -43,6 +43,12 @@ export interface ImageLayer extends BaseLayer {
   grayscale: number;    // 0-100 filter
   flipH?: boolean;
   flipV?: boolean;
+  blur?: number;        // 0-30 px
+  brightness?: number;  // 0-200 %
+  contrast?: number;    // 0-200 %
+  saturate?: number;    // 0-200 %
+  imgWidth?: number;
+  imgHeight?: number;
 }
 
 // --- Rect Layer ---
@@ -65,8 +71,49 @@ export interface CircleLayer extends BaseLayer {
   borderColor: string;
 }
 
+// --- Triangle Layer ---
+export interface TriangleLayer extends BaseLayer {
+  type: 'triangle';
+  content: string;      // Fill color (hex)
+  width: number;
+  height: number;
+  borderWidth: number;
+  borderColor: string;
+}
+
+// --- Arrow Layer ---
+export interface ArrowLayer extends BaseLayer {
+  type: 'arrow';
+  content: string;      // Fill / stroke color (hex)
+  width: number;
+  height: number;
+  strokeWidth: number;  // arrow shaft thickness
+  headSize: number;     // arrowhead size
+}
+
+// --- Line Layer ---
+export interface LineLayer extends BaseLayer {
+  type: 'line';
+  content: string;      // Stroke color (hex)
+  width: number;        // line length
+  strokeWidth: number;  // line thickness
+  dashArray?: string;   // e.g. "8,4" for dashed
+}
+
+// --- Star Layer ---
+export interface StarLayer extends BaseLayer {
+  type: 'star';
+  content: string;      // Fill color (hex)
+  width: number;
+  height: number;
+  points: number;       // number of star points (5, 6, 8, etc.)
+  innerRadius: number;  // 0-1 ratio of inner to outer radius
+  borderWidth: number;
+  borderColor: string;
+}
+
 // --- Union Type ---
-export type Layer = TextLayer | ImageLayer | RectLayer | CircleLayer;
+export type Layer = TextLayer | ImageLayer | RectLayer | CircleLayer | TriangleLayer | ArrowLayer | LineLayer | StarLayer;
 
 // --- Template ---
 export interface AspectRatio {
@@ -108,9 +155,12 @@ export interface ExportOptions {
 }
 
 // --- Font ---
+export type FontCategory = 'sans-serif' | 'serif' | 'display' | 'monospace' | 'chinese';
+
 export interface FontEntry {
   name: string;
   value: string;        // CSS font-family value
+  category: FontCategory;
 }
 
 // --- Color Preset ---

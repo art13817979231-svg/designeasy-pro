@@ -33,11 +33,13 @@ import {
   Lock, Unlock, Ghost, LayoutGrid,
   Sparkles, Palette as PaletteIcon,
   AlignCenter, AlignLeft, AlignRight, AlignStartVertical, AlignEndVertical, AlignCenterVertical,
-  Circle, RectangleHorizontal, Grid3X3, RotateCw, Minus
+  Circle, RectangleHorizontal, Grid3X3, RotateCw, Minus,
+  Triangle, ArrowRight, Minus as LineIcon, Star,
+  Search, ChevronDown, Sparkles
 } from 'lucide-react';
 
 // --- Extracted modules ---
-import { BUILTIN_FONTS } from './config/fonts';
+import { BUILTIN_FONTS, FONT_CATEGORIES } from './config/fonts';
 import { ASPEC_RATIOS, TEMPLATES } from './config/templates';
 import { COLOR_PRESETS } from './config/colors';
 import { translations } from './config/i18n';
@@ -80,6 +82,8 @@ const App = () => {
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; layerId: string } | null>(null);
   const [copiedLayers, setCopiedLayers] = useState<Partial<Layer>[] | null>(null);
+  const [fontCategory, setFontCategory] = useState<string>('all');
+  const [fontSearch, setFontSearch] = useState('');
   const spaceRef = useRef(false);
   const panStartRef = useRef({ x: 0, y: 0, ox: 0, oy: 0 });
 
@@ -94,6 +98,18 @@ const App = () => {
   
   const selectedLayer = useMemo(() => layers.find(l => l.id === selectedIds[0]), [layers, selectedIds]);
   const allFonts = useMemo(() => [...BUILTIN_FONTS, ...customFonts], [customFonts]);
+  
+  const filteredFonts = useMemo(() => {
+    let fonts = allFonts;
+    if (fontCategory !== 'all') {
+      fonts = fonts.filter(f => (f as any).category === fontCategory);
+    }
+    if (fontSearch.trim()) {
+      const q = fontSearch.toLowerCase();
+      fonts = fonts.filter(f => f.name.toLowerCase().includes(q));
+    }
+    return fonts;
+  }, [allFonts, fontCategory, fontSearch]);
 
   // Dark mode class toggle
   useEffect(() => {
@@ -678,6 +694,34 @@ const App = () => {
               setAddingType('circle');
               setTimeout(() => setAddingType(null), 300);
             }} label={t.addCircle} />
+            <ToolIcon icon={<Triangle size={22}/>} active={addingType === 'triangle'} onClick={() => {
+              const newId = `l-${Date.now()}`;
+              setLayers(p => [...p, { id: newId, type: 'triangle', content: '#000000', x: 50, y: 50, width: 200, height: 180, rotate: 0, scale: 1, opacity: 1, isLocked: false, isVisible: true, borderWidth: 0, borderColor: '#000' } as Layer]);
+              setSelectedIds([newId]);
+              setAddingType('triangle');
+              setTimeout(() => setAddingType(null), 300);
+            }} label={t.addTriangle || '三角形'} />
+            <ToolIcon icon={<ArrowRight size={22}/>} active={addingType === 'arrow'} onClick={() => {
+              const newId = `l-${Date.now()}`;
+              setLayers(p => [...p, { id: newId, type: 'arrow', content: '#000000', x: 50, y: 50, width: 200, height: 60, rotate: 0, scale: 1, opacity: 1, isLocked: false, isVisible: true, strokeWidth: 4, headSize: 18 } as Layer]);
+              setSelectedIds([newId]);
+              setAddingType('arrow');
+              setTimeout(() => setAddingType(null), 300);
+            }} label={t.addArrow || '箭头'} />
+            <ToolIcon icon={<LineIcon size={22}/>} active={addingType === 'line'} onClick={() => {
+              const newId = `l-${Date.now()}`;
+              setLayers(p => [...p, { id: newId, type: 'line', content: '#000000', x: 50, y: 50, width: 200, rotate: 0, scale: 1, opacity: 1, isLocked: false, isVisible: true, strokeWidth: 2 } as Layer]);
+              setSelectedIds([newId]);
+              setAddingType('line');
+              setTimeout(() => setAddingType(null), 300);
+            }} label={t.addLine || '线条'} />
+            <ToolIcon icon={<Star size={22}/>} active={addingType === 'star'} onClick={() => {
+              const newId = `l-${Date.now()}`;
+              setLayers(p => [...p, { id: newId, type: 'star', content: '#FFD700', x: 50, y: 50, width: 150, height: 150, rotate: 0, scale: 1, opacity: 1, isLocked: false, isVisible: true, points: 5, innerRadius: 0.4, borderWidth: 0, borderColor: '#000' } as Layer]);
+              setSelectedIds([newId]);
+              setAddingType('star');
+              setTimeout(() => setAddingType(null), 300);
+            }} label={t.addStar || '星形'} />
             <div className="w-8 h-px bg-slate-100 dark:bg-slate-700 my-1" />
             <ToolIcon icon={<Layers size={22}/>} active={activePanel === 'layers'} onClick={() => setActivePanel('layers')} label={t.layers} />
             <ToolIcon icon={<Settings size={22}/>} active={activePanel === 'settings'} onClick={() => setActivePanel('settings')} label={t.settings} />
@@ -706,8 +750,8 @@ const App = () => {
                 <div className="space-y-1.5">
                   {[...layers].reverse().map(l => (
                     <div key={l.id} onClick={() => setSelectedIds([l.id])} className={`flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer group ${selectedIds.includes(l.id) ? 'bg-black text-white shadow-xl' : `${darkMode ? 'hover:bg-slate-800 border border-transparent text-slate-300' : 'hover:bg-slate-50 border border-transparent text-slate-700'}`} ${!l.isVisible ? 'opacity-30' : ''}`}>
-                      {l.type === 'text' ? <FontIcon size={14} /> : l.type === 'rect' ? <RectangleHorizontal size={14} /> : l.type === 'circle' ? <Circle size={14} /> : <ImageIcon size={14} />}
-                      <span className="text-[10px] font-bold truncate flex-1 uppercase tracking-tighter">{l.type === 'text' ? l.content.slice(0, 12) : l.type === 'rect' ? '矩形' : l.type === 'circle' ? '圆形' : '图片'}</span>
+                      {l.type === 'text' ? <FontIcon size={14} /> : l.type === 'rect' ? <RectangleHorizontal size={14} /> : l.type === 'circle' ? <Circle size={14} /> : l.type === 'triangle' ? <Triangle size={14} /> : l.type === 'arrow' ? <ArrowRight size={14} /> : l.type === 'line' ? <LineIcon size={14} /> : l.type === 'star' ? <Star size={14} /> : <ImageIcon size={14} />}
+                      <span className="text-[10px] font-bold truncate flex-1 uppercase tracking-tighter">{l.type === 'text' ? l.content.slice(0, 12) : l.type === 'rect' ? '矩形' : l.type === 'circle' ? '圆形' : l.type === 'triangle' ? '三角形' : l.type === 'arrow' ? '箭头' : l.type === 'line' ? '线条' : l.type === 'star' ? '星形' : '图片'}</span>
                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button onClick={(e) => { e.stopPropagation(); toggleLayerStatus(l.id, 'isLocked'); }} className={`p-1 ${selectedIds.includes(l.id) ? 'hover:text-yellow-300' : 'hover:text-indigo-400'}`}>{l.isLocked ? <Lock size={12}/> : <Unlock size={12}/>}</button>
                         <button onClick={(e) => { e.stopPropagation(); toggleLayerStatus(l.id, 'isVisible'); }} className={`p-1 ${selectedIds.includes(l.id) ? 'hover:text-yellow-300' : 'hover:text-indigo-400'}`}>{l.isVisible ? <Eye size={12}/> : <EyeOff size={12}/>}</button>
@@ -906,17 +950,30 @@ const App = () => {
                 {selectedLayer.type === 'text' && (
                   <SectionHeader title={t.typography}>
                     <div className="space-y-4 pt-1">
+                      {/* Font Category Tabs */}
                       <div className="space-y-2">
                         <div className="flex justify-between items-center">
                           <span className="text-[10px] font-bold text-slate-400">{t.font}</span>
                           <button onClick={() => fontInputRef.current?.click()} className="text-[9px] text-indigo-600 hover:underline flex items-center gap-1 font-black uppercase"><UploadCloud size={10}/> {t.uploadFont}</button>
                         </div>
+                        <div className="flex flex-wrap gap-1">
+                          <button onClick={() => setFontCategory('all')} className={`px-2 py-1 rounded-lg text-[9px] font-semibold transition-all ${fontCategory === 'all' ? 'bg-black text-white dark:bg-white dark:text-black' : `${darkMode ? 'bg-slate-800 text-slate-400 hover:bg-slate-700' : 'bg-white text-slate-400 hover:bg-slate-100'}`}`}>全部</button>
+                          {FONT_CATEGORIES.map(cat => (
+                            <button key={cat.id} onClick={() => setFontCategory(cat.id)} className={`px-2 py-1 rounded-lg text-[9px] font-semibold transition-all ${fontCategory === cat.id ? 'bg-black text-white dark:bg-white dark:text-black' : `${darkMode ? 'bg-slate-800 text-slate-400 hover:bg-slate-700' : 'bg-white text-slate-400 hover:bg-slate-100'}`}`}>{lang === 'zh' ? cat.label : cat.labelEn}</button>
+                          ))}
+                        </div>
+                        {/* Font Search */}
+                        <div className={`relative ${darkMode ? 'bg-slate-800/80' : 'bg-white'} rounded-xl border ${darkMode ? 'border-slate-600' : 'border-slate-200'}`}>
+                          <Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                          <input type="text" value={fontSearch} onChange={(e) => setFontSearch(e.target.value)} placeholder="搜索字体..." className={`w-full pl-8 pr-3 py-2 text-[11px] font-semibold outline-none bg-transparent ${darkMode ? 'text-slate-200 placeholder-slate-500' : 'text-slate-700 placeholder-slate-400'}`} />
+                        </div>
+                        {/* Font Dropdown */}
                         <select value={selectedLayer.fontFamily} onChange={(e) => updateBatchLayers({ fontFamily: e.target.value } as Partial<Layer>)} 
                           className={`w-full border rounded-xl px-3 py-2 text-[11px] font-semibold outline-none transition-all cursor-pointer appearance-none
                             ${darkMode ? 'bg-slate-800/80 border-slate-600 text-slate-200 hover:border-slate-500 focus:border-indigo-500' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 focus:border-indigo-500'}`}
                           style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 10px center' }}
                         >
-                          {allFonts.map(f => <option key={f.value} value={f.value}>{f.name}</option>)}
+                          {filteredFonts.map(f => <option key={f.value} value={f.value}>{f.name}</option>)}
                         </select>
                       </div>
                       <div className="flex gap-2 mb-4">
@@ -971,13 +1028,19 @@ const App = () => {
                       <PropertySlider label="宽度" value={(selectedLayer as any).imgWidth ?? 400} min={20} max={4000} onChange={(v) => updateBatchLayers({ imgWidth: v } as any)} />
                       <PropertySlider label="高度" value={(selectedLayer as any).imgHeight ?? 300} min={20} max={4000} onChange={(v) => updateBatchLayers({ imgHeight: v } as any)} />
                       <PropertySlider label="圆角" value={selectedLayer.borderRadius} min={0} max={1000} onChange={(v) => updateBatchLayers({ borderRadius: v } as Partial<Layer>)} />
-                      <PropertySlider label="模糊" value={(selectedLayer as any).blur ?? 0} min={0} max={30} onChange={(v) => updateBatchLayers({ blur: v } as any)} />
-                      <PropertySlider label="黑白" value={(selectedLayer as any).grayscale ?? 0} min={0} max={100} onChange={(v) => updateBatchLayers({ grayscale: v } as any)} />
+                      <div className={`pt-3 border-t ${darkMode ? 'border-slate-700/50' : 'border-slate-100'}`}>
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block mb-3">滤镜</span>
+                        <PropertySlider label="亮度" value={(selectedLayer as any).brightness ?? 100} min={0} max={200} onChange={(v) => updateBatchLayers({ brightness: v } as any)} />
+                        <PropertySlider label="对比度" value={(selectedLayer as any).contrast ?? 100} min={0} max={200} onChange={(v) => updateBatchLayers({ contrast: v } as any)} />
+                        <PropertySlider label="饱和度" value={(selectedLayer as any).saturate ?? 100} min={0} max={200} onChange={(v) => updateBatchLayers({ saturate: v } as any)} />
+                        <PropertySlider label="模糊" value={(selectedLayer as any).blur ?? 0} min={0} max={30} onChange={(v) => updateBatchLayers({ blur: v } as any)} />
+                        <PropertySlider label="黑白" value={(selectedLayer as any).grayscale ?? 0} min={0} max={100} onChange={(v) => updateBatchLayers({ grayscale: v } as any)} />
+                      </div>
                     </div>
                   </SectionHeader>
                 )}
 
-                {(selectedLayer.type === 'rect' || selectedLayer.type === 'circle') && (
+                {(selectedLayer.type === 'rect' || selectedLayer.type === 'circle' || selectedLayer.type === 'triangle' || selectedLayer.type === 'star') && (
                   <SectionHeader title={t.color}>
                     <div className="space-y-4 pt-1">
                       <ColorPicker 
@@ -998,6 +1061,56 @@ const App = () => {
                       {selectedLayer.type === 'circle' && (
                         <PropertySlider label="大小" value={(selectedLayer as any).width ?? 200} min={10} max={2000} onChange={(v) => updateBatchLayers({ width: v } as any)} />
                       )}
+                      {selectedLayer.type === 'triangle' && (
+                        <>
+                          <PropertySlider label="宽度" value={(selectedLayer as any).width ?? 200} min={10} max={2000} onChange={(v) => updateBatchLayers({ width: v } as any)} />
+                          <PropertySlider label="高度" value={(selectedLayer as any).height ?? 180} min={10} max={2000} onChange={(v) => updateBatchLayers({ height: v } as any)} />
+                        </>
+                      )}
+                      {selectedLayer.type === 'star' && (
+                        <>
+                          <PropertySlider label="宽度" value={(selectedLayer as any).width ?? 150} min={10} max={2000} onChange={(v) => updateBatchLayers({ width: v } as any)} />
+                          <PropertySlider label="高度" value={(selectedLayer as any).height ?? 150} min={10} max={2000} onChange={(v) => updateBatchLayers({ height: v } as any)} />
+                          <PropertySlider label="角数" value={(selectedLayer as any).points ?? 5} min={3} max={20} step={1} onChange={(v) => updateBatchLayers({ points: v } as any)} />
+                          <PropertySlider label="内半径" value={(selectedLayer as any).innerRadius ?? 0.4} min={0.1} max={0.9} step={0.05} onChange={(v) => updateBatchLayers({ innerRadius: v } as any)} />
+                        </>
+                      )}
+                    </div>
+                  </SectionHeader>
+                )}
+
+                {selectedLayer.type === 'arrow' && (
+                  <SectionHeader title={t.color}>
+                    <div className="space-y-4 pt-1">
+                      <ColorPicker 
+                        label="颜色" 
+                        value={(selectedLayer as any).content ?? '#000000'} 
+                        onChange={(v) => { updateBatchLayers({ content: v } as any); addRecentColor(v); }}
+                        recentColors={recentColors}
+                        onPresetClick={(v) => { updateBatchLayers({ content: v } as any); addRecentColor(v); }}
+                      />
+                      <PropertySlider label={t.opacity} value={selectedLayer.opacity} min={0} max={1} step={0.05} onChange={(v) => updateBatchLayers({ opacity: v } as Partial<Layer>)} />
+                      <PropertySlider label="宽度" value={(selectedLayer as any).width ?? 200} min={20} max={2000} onChange={(v) => updateBatchLayers({ width: v } as any)} />
+                      <PropertySlider label="高度" value={(selectedLayer as any).height ?? 60} min={10} max={500} onChange={(v) => updateBatchLayers({ height: v } as any)} />
+                      <PropertySlider label="线粗" value={(selectedLayer as any).strokeWidth ?? 4} min={1} max={30} onChange={(v) => updateBatchLayers({ strokeWidth: v } as any)} />
+                      <PropertySlider label="箭头大小" value={(selectedLayer as any).headSize ?? 18} min={5} max={60} onChange={(v) => updateBatchLayers({ headSize: v } as any)} />
+                    </div>
+                  </SectionHeader>
+                )}
+
+                {selectedLayer.type === 'line' && (
+                  <SectionHeader title={t.color}>
+                    <div className="space-y-4 pt-1">
+                      <ColorPicker 
+                        label="颜色" 
+                        value={(selectedLayer as any).content ?? '#000000'} 
+                        onChange={(v) => { updateBatchLayers({ content: v } as any); addRecentColor(v); }}
+                        recentColors={recentColors}
+                        onPresetClick={(v) => { updateBatchLayers({ content: v } as any); addRecentColor(v); }}
+                      />
+                      <PropertySlider label={t.opacity} value={selectedLayer.opacity} min={0} max={1} step={0.05} onChange={(v) => updateBatchLayers({ opacity: v } as Partial<Layer>)} />
+                      <PropertySlider label="长度" value={(selectedLayer as any).width ?? 200} min={10} max={2000} onChange={(v) => updateBatchLayers({ width: v } as any)} />
+                      <PropertySlider label="粗细" value={(selectedLayer as any).strokeWidth ?? 2} min={1} max={50} onChange={(v) => updateBatchLayers({ strokeWidth: v } as any)} />
                     </div>
                   </SectionHeader>
                 )}
