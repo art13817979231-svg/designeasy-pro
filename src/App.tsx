@@ -35,7 +35,7 @@ import {
   AlignCenter, AlignLeft, AlignRight, AlignStartVertical, AlignEndVertical, AlignCenterVertical,
   Circle, RectangleHorizontal, Grid3X3, RotateCw, Minus,
   Triangle, ArrowRight, Minus as LineIcon, Star,
-  Search, ChevronDown, Sparkles
+  Search, ChevronDown
 } from 'lucide-react';
 
 // --- Extracted modules ---
