@@ -22,7 +22,7 @@ export const TEMPLATES: Template[] = [
       { id: 'g3', type: 'rect', x: 92, y: 50, w: 0.5, h: 100, borderRadius: 0, color: '#000000', rotate: 0, scale: 1, opacity: 0.15, isLocked: true, isVisible: true } as Layer,
       
       // Main image with precise positioning
-      { id: 'img1', type: 'image', content: './img/arch.jpg', x: 50, y: 52, scale: 0.72, rotate: 0, opacity: 0.95, borderRadius: 0, isLocked: false, isVisible: true } as Layer,
+      { id: 'img1', type: 'image', content: '/designeasy-pro/img/arch.jpg', x: 50, y: 52, scale: 0.72, rotate: 0, opacity: 0.95, borderRadius: 0, isLocked: false, isVisible: true } as Layer,
       
       // Swiss-style typography: overlapping, geometric, systematic
       { id: 'l1', type: 'text', content: 'ARCHITECTURE', x: 50, y: 15, fontSize: 11, color: '#1A1A1A', rotate: 0, scale: 1, fontWeight: '700', fontFamily: '"Inter", sans-serif', letterSpacing: 18, lineHeight: 1, opacity: 1, isLocked: false, isVisible: true, textAlign: 'center' } as Layer,
@@ -48,7 +48,7 @@ export const TEMPLATES: Template[] = [
     bg: '#0D0D0D',
     layers: [
       // Background image with reduced opacity
-      { id: 'img1', type: 'image', content: './img/luxe.jpg', x: 50, y: 50, scale: 1.25, rotate: 0, opacity: 0.45, borderRadius: 0, isLocked: true, isVisible: true } as Layer,
+      { id: 'img1', type: 'image', content: '/designeasy-pro/img/luxe.jpg', x: 50, y: 50, scale: 1.25, rotate: 0, opacity: 0.45, borderRadius: 0, isLocked: true, isVisible: true } as Layer,
       
       // Overlay rectangles for depth (Vogue style)
       { id: 'r1', type: 'rect', x: 50, y: 50, w: 100, h: 100, borderRadius: 0, color: '#0D0D0D', rotate: 0, scale: 1, opacity: 0.4, isLocked: true, isVisible: true } as Layer,
@@ -81,7 +81,7 @@ export const TEMPLATES: Template[] = [
     bg: '#050505',
     layers: [
       // Background image with low opacity
-      { id: 'img1', type: 'image', content: './img/cyber.jpg', x: 50, y: 50, scale: 1.0, rotate: 0, opacity: 0.35, borderRadius: 0, grayscale: 100, isLocked: true, isVisible: true } as Layer,
+      { id: 'img1', type: 'image', content: '/designeasy-pro/img/cyber.jpg', x: 50, y: 50, scale: 1.0, rotate: 0, opacity: 0.35, borderRadius: 0, grayscale: 100, isLocked: true, isVisible: true } as Layer,
       
       // Scanline overlay (cyberpunk effect)
       { id: 's1', type: 'rect', x: 50, y: 20, w: 100, h: 0.3, borderRadius: 0, color: '#00FFC8', rotate: 0, scale: 1, opacity: 0.15, isLocked: true, isVisible: true } as Layer,
@@ -121,7 +121,7 @@ export const TEMPLATES: Template[] = [
     bg: '#F5F0E8',
     layers: [
       // Background image with soft overlay
-      { id: 'img1', type: 'image', content: './img/bloom.jpg', x: 50, y: 55, scale: 1.15, rotate: 0, opacity: 0.75, borderRadius: 0, grayscale: 25, isLocked: true, isVisible: true } as Layer,
+      { id: 'img1', type: 'image', content: '/designeasy-pro/img/bloom.jpg', x: 50, y: 55, scale: 1.15, rotate: 0, opacity: 0.75, borderRadius: 0, grayscale: 25, isLocked: true, isVisible: true } as Layer,
       
       // Soft overlay rectangle for text readability
       { id: 'ov1', type: 'rect', x: 50, y: 50, w: 100, h: 100, borderRadius: 0, color: '#F5F0E8', rotate: 0, scale: 1, opacity: 0.35, isLocked: true, isVisible: true } as Layer,
@@ -186,7 +186,7 @@ export const TEMPLATES: Template[] = [
     bg: '#F8F4EC',
     layers: [
       // Background image with low opacity (ink wash feel)
-      { id: 'img1', type: 'image', content: './img/ink.jpg', x: 50, y: 52, scale: 1.05, rotate: 0, opacity: 0.55, borderRadius: 0, grayscale: 50, isLocked: true, isVisible: true } as Layer,
+      { id: 'img1', type: 'image', content: '/designeasy-pro/img/ink.jpg', x: 50, y: 52, scale: 1.05, rotate: 0, opacity: 0.55, borderRadius: 0, grayscale: 50, isLocked: true, isVisible: true } as Layer,
       
       // Rice paper texture overlay
       { id: 'tp1', type: 'rect', x: 50, y: 50, w: 100, h: 100, borderRadius: 0, color: '#F8F4EC', rotate: 0, scale: 1, opacity: 0.4, isLocked: true, isVisible: true } as Layer,
@@ -222,7 +222,7 @@ export const TEMPLATES: Template[] = [
     bg: '#F2E6D4',
     layers: [
       // Vinyl record image with warm overlay
-      { id: 'img1', type: 'image', content: './img/vinyl.jpg', x: 50, y: 50, scale: 0.92, rotate: 0, opacity: 0.82, borderRadius: 0, isLocked: true, isVisible: true } as Layer,
+      { id: 'img1', type: 'image', content: '/designeasy-pro/img/vinyl.jpg', x: 50, y: 50, scale: 0.92, rotate: 0, opacity: 0.82, borderRadius: 0, isLocked: true, isVisible: true } as Layer,
       
       // Warm overlay for retro feel
       { id: 'ov1', type: 'rect', x: 50, y: 50, w: 100, h: 100, borderRadius: 0, color: '#F2E6D4', rotate: 0, scale: 1, opacity: 0.25, isLocked: true, isVisible: true } as Layer,
@@ -256,7 +256,7 @@ export const TEMPLATES: Template[] = [
     bg: '#000000',
     layers: [
       // Background image with low opacity (tech feel)
-      { id: 'img1', type: 'image', content: './img/tech.jpg', x: 50, y: 58, scale: 0.72, rotate: 0, opacity: 0.5, borderRadius: 24, isLocked: true, isVisible: true } as Layer,
+      { id: 'img1', type: 'image', content: '/designeasy-pro/img/tech.jpg', x: 50, y: 58, scale: 0.72, rotate: 0, opacity: 0.5, borderRadius: 24, isLocked: true, isVisible: true } as Layer,
       
       // Dark overlay for text readability
       { id: 'ov1', type: 'rect', x: 50, y: 50, w: 100, h: 100, borderRadius: 0, color: '#000000', rotate: 0, scale: 1, opacity: 0.55, isLocked: true, isVisible: true } as Layer,
